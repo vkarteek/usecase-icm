@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MCP Browser Chat</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, button { padding: 10px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h2>Ask MCP + OpenAI</h2>
+  <input id="q" style="width: 300px;" placeholder="Ask something..." />
+  <button onclick="ask()">Send</button>
+
+  <h3>Response:</h3>
+  <pre id="out"></pre>
+
+<script>
+async function ask() {
+  const q = document.getElementById("q").value;
+  document.getElementById("out").innerText = "Loading...";
+
+  const res = await fetch("http://localhost:4000/ask", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ question: q }),
+  });
+
+  const data = await res.json();
+  document.getElementById("out").innerText = data.answer || JSON.stringify(data);
+}
+</script>
+</body>
+</html>
