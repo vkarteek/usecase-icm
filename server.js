@@ -13,33 +13,83 @@ const require = createRequire(import.meta.url);
 
 import * as weatherTool from "./tools/weather.js";
 import * as addTool from "./tools/add.js";
+import { createSoftwareTicketHandler } from "./tools/createSoftwareTicket.js";
+import { fetchSoftwareTicketHandler } from "./tools/fetchSoftwareTicket.js";
+import { createHardwareTicketHandler } from "./tools/createHardwareTicket.js";
+import { fetchHardwareTicketHandler } from "./tools/fetchHardwareTicket.js";
+
 
 const toolsRegistry = {
-    get_weather: {
-      name: "get_weather",
-      description: "Get current weather for a city. Args: { city: string }",
-      inputSchema: {
-        type: "object",
-        properties: { city: { type: "string" } },
-        required: ["city"],
-      },
-    },
-  
-    add_numbers: {
-      name: "add_numbers",
-      description: "Add two numbers. Args: { a: number, b: number }",
-      inputSchema: {
-        type: "object",
-        properties: { a: { type: "number" }, b: { type: "number" } },
-        required: ["a", "b"],
-      },
-    },
-  };
 
-  const handlers = {
-    get_weather: async (args) => await weatherTool.getWeatherHandler(args),
-    add_numbers: async (args) => await addTool.addNumbersHandler(args),
-  };
+  create_software_ticket: {
+    name: "create_software_ticket",
+    description: "Use this tool ONLY for software issues. Creates a new software ticket. Required input: { message: string } where message contains the user's software problem.",
+    inputSchema: {
+      type: "object",
+      properties: { message: { type: "string" } },
+      required: ["message"]
+    }
+  },
+
+  fetch_software_ticket: {
+    name: "fetch_software_ticket",
+    description: "Use this tool ONLY when the user wants to retrieve a SOFTWARE ticket. Input: { ticketId: string }",
+    inputSchema: {
+      type: "object",
+      properties: { ticketId: { type: "string" } },
+      required: ["ticketId"]
+    }
+  },
+
+  create_hardware_ticket: {
+    name: "create_hardware_ticket",
+    description: "Use this tool ONLY for hardware issues such as laptop, mouse, display, keyboard, charger, etc. Creates a hardware ticket. Required input: { message: string }",
+    inputSchema: {
+      type: "object",
+      properties: { message: { type: "string" } },
+      required: ["message"]
+    }
+  },
+
+  fetch_hardware_ticket: {
+    name: "fetch_hardware_ticket",
+    description: "Use this tool ONLY when the user wants to retrieve a HARDWARE ticket. Input: { ticketId: string }",
+    inputSchema: {
+      type: "object",
+      properties: { ticketId: { type: "string" } },
+      required: ["ticketId"]
+    }
+  },
+  get_weather: {
+    name: "get_weather",
+    description: "Get current weather for a city. Args: { city: string }",
+    inputSchema: {
+      type: "object",
+      properties: { city: { type: "string" } },
+      required: ["city"],
+    },
+  },
+
+  add_numbers: {
+    name: "add_numbers",
+    description: "Add two numbers. Args: { a: number, b: number }",
+    inputSchema: {
+      type: "object",
+      properties: { a: { type: "number" }, b: { type: "number" } },
+      required: ["a", "b"],
+    },
+  },
+};
+
+const handlers = {
+  get_weather: async (args) => await weatherTool.getWeatherHandler(args),
+  add_numbers: async (args) => await addTool.addNumbersHandler(args),
+  create_software_ticket: async (args)=> await createSoftwareTicketHandler(args),
+  create_hardware_ticket:async (args)=> await createHardwareTicketHandler(args),
+  fetch_software_ticket:async (args)=> await fetchSoftwareTicketHandler(args),
+  fetch_hardware_ticket:async (args)=> await fetchHardwareTicketHandler(args)
+
+};
 // const toolsRegistry = {
 //   get_weather: {
 //     name: "get_weather",
@@ -108,7 +158,7 @@ app.post("/tools/call", async (req, res) => {
         });
       }
     }
-    
+
     const handlerFn = handlers[name];
     if (!handlerFn) {
       return res.status(500).json({ error: `Handler not registered for ${name}` });
@@ -123,7 +173,7 @@ app.post("/tools/call", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.MCP || 3000;
 app.listen(PORT, () => {
   console.log(`MCP-like server listening on http://0.0.0.0:${PORT}`);
   console.log("Available tools:", Object.keys(toolsRegistry).join(", "));
