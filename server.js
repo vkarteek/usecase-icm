@@ -90,29 +90,7 @@ const handlers = {
   fetch_hardware_ticket:async (args)=> await fetchHardwareTicketHandler(args)
 
 };
-// const toolsRegistry = {
-//   get_weather: {
-//     name: "get_weather",
-//     description: "Get current weather for a city. Args: { city: string }",
-//     inputSchema: {
-//       type: "object",
-//       properties: { city: { type: "string" } },
-//       required: ["city"],
-//     },
-//     handler: async (args) => await weatherTool.getWeatherHandler(args),
-//   },
 
-//   add_numbers: {
-//     name: "add_numbers",
-//     description: "Add two numbers. Args: { a: number, b: number }",
-//     inputSchema: {
-//       type: "object",
-//       properties: { a: { type: "number" }, b: { type: "number" } },
-//       required: ["a", "b"],
-//     },
-//     handler: async (args) => await addTool.addNumbersHandler(args),
-//   },
-// };
 
 const app = express();
 app.use(cors());
