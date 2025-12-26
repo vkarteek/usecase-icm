@@ -58,9 +58,7 @@ async def main() -> None:
         )
         request = SendMessageRequest(
             id=str(uuid.uuid4()),
-            #id="600725d8-4c94-47bd-9fec-81bfdb27c7a6",
             params=MessageSendParams(
-                context_id="1bb0dc42-7315-46ce-a1c6-a062731c9fd9",
                 message=message_payload,
             ),
         )    
