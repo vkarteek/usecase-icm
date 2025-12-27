@@ -1,6 +1,3 @@
-# usecase-icm
-POC using MCP+A2A Protocols Incident Creation Management(ICM)
-
 ### Eli Lily POC using A2A and MCP
 
 This README document describes all you need to know about this project - Incident Management System
