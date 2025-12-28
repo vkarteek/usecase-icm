@@ -27,44 +27,12 @@ from host_state import HostConversationState
 OPENAI_API_KEY = ""
 openai_client = AsyncOpenAI(api_key= OPENAI_API_KEY,timeout=10.0)
 
-async def classify_issue_type(ticket_text: str) -> str:
-    """
-    Behavior:
-      - Classify the issue as hardware or software
-      - If hardware issue → return EXACTLY: hardware
-      - If software issue → return EXACTLY: software
-    """
-
-    prompt = f"""
-You are an issue classification engine.
-
-TASK:
-Determine whether the incident described is a HARDWARE issue or a SOFTWARE issue.
-
-RULES:
-- If the issue involves physical components (servers, disks, memory, CPU, power supply,
-  fans, cables, networking hardware, sensors, devices), return EXACTLY: hardware
-- If the issue involves applications, operating systems, drivers, firmware logic,
-  services, configuration, bugs, crashes, or performance tuning, return EXACTLY: software
-- Output must be ONE lowercase word only.
-- No explanations, no punctuation, no extra text.
-
-Incident description:
-\"\"\"{ticket_text}\"\"\"
-"""
-
-    response = await openai_client.responses.create(
-        model="gpt-4.1-mini",
-        input=prompt,
-        temperature=0.0
-    )
-
-    # Extract text safely
-
-    return response.output_text
 
 async def extract_fields(llm, user_input: str):
     prompt = f"""
+If user input is asking for an update or status by giving a ticket number , respond with either - "hardware_update" or "software_update".
+
+ELSE do the following:
 Extract structured fields from the user input.
 
 Return JSON only.
@@ -82,7 +50,8 @@ User input:
         model="gpt-5-nano",
         input=prompt
     )
-
+    if(response.output_text == "hardware_update" or response.output_text == "software_update"):
+        return response.output_text
     return json.loads(response.output_text)
 
 def find_missing_fields(state: dict):
@@ -198,6 +167,29 @@ class HostAgentExecutor(AgentExecutor):
          # Extract new fields
         extracted = await extract_fields(self.llm, user_input)
 
+        if extracted == "hardware_update" or extracted == "software_update":
+            # Forward request to both agents for status update
+
+            target_client = None
+            if extracted == "hardware_update":  
+                target_client = self.hardware_client
+                print("[HostAgent] Routing status update to Hardware Agent")
+            else:
+                target_client = self.software_client
+                print("[HostAgent] Routing status update to Software Agent")
+
+            agent_status_response = await target_client.send_message(
+                self._build_request(user_input)
+            )
+
+            # Extract replies
+            agent_status_reply = agent_status_response.root.result.parts[0].root.text
+
+            # Return combined response to user
+            event_queue.enqueue_event(
+                new_agent_text_message(agent_status_reply)
+            )
+            return
         # Update state
         state = self.state_store.update(context_id, {
             k: v for k, v in extracted.items() if v
@@ -226,13 +218,11 @@ class HostAgentExecutor(AgentExecutor):
             return
 
         # All info collected → ROUTE
-        category = state["category"]
+        category = state["category"] or "software"  # Default to software
 
         self.state_store.clear(context_id)
 
         # Decide routing
-        # is_hardware = await classify_issue_type(user_input)
-        # print(f"[HostAgent] Hardware issue detected: {is_hardware}")
 
         if category == "hardware":
             target_client = self.hardware_client
@@ -240,9 +230,11 @@ class HostAgentExecutor(AgentExecutor):
         else:
             target_client = self.software_client
             print("[HostAgent] Routing to Software Agent")
-        # Forward request
+        # Compose user problem and Forward request
+        user_issue=f"My type of issue is {state['category']} . My ugency is {state['urgency']} . My affected system is {state['affected_system']} . My impact is {state['impact']} ."
+            
         response = await target_client.send_message(
-            self._build_request(user_input)
+            self._build_request(user_issue)
         )
 
         #print(f"[HostAgent] Received response: {response}")
