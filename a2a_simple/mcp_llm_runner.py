@@ -26,7 +26,7 @@ async def run_llm_with_mcp_tools(
 
     # 2. First LLM call
     step1 = await openai_client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message},
@@ -50,7 +50,7 @@ async def run_llm_with_mcp_tools(
 
     # 5. Final LLM call with tool output
     step2 = await openai_client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message},

@@ -30,29 +30,40 @@ openai_client = AsyncOpenAI(api_key= OPENAI_API_KEY,timeout=10.0)
 
 async def extract_fields(llm, user_input: str):
     prompt = f"""
-If user input is asking for an update or status by giving a ticket number , respond with either - "hardware_update" or "software_update".
+    You are a STRICT classifier.
 
-ELSE do the following:
-Extract structured fields from the user input.
+    FIRST decide intent.
 
-Return JSON only.
+    If the user is asking for status, update, progress, or mentions a ticket number,
+    respond with EXACTLY one of these strings and NOTHING ELSE:
+    - hardware_update
+    - software_update
 
-Fields:
-- category (hardware | software | null)
-- affected_system (string | null)
-- impact (string | null)
-- urgency (low | medium | high | critical | null)
+    DO NOT return JSON in that case.
 
-User input:
-\"\"\"{user_input}\"\"\"
-"""
+    ONLY IF it is NOT an update request, then return JSON EXACTLY in this format:
+
+    {{
+    "category": "hardware|software|null",
+    "affected_system": string|null,
+    "impact": string|null,
+    "urgency": "low|medium|high|critical|null"
+    }}
+
+    User input:
+    \"\"\"{user_input}\"\"\"
+    """
+
     response = await llm.responses.create(
-        model="gpt-5-nano",
+        model="gpt-4o-mini",
         input=prompt
     )
-    if(response.output_text == "hardware_update" or response.output_text == "software_update"):
-        return response.output_text
-    return json.loads(response.output_text)
+    text = response.output_text.strip()
+
+    if text in ("hardware_update", "software_update"):
+        return text
+
+    return json.loads(text)
 
 def find_missing_fields(state: dict):
     missing = []
