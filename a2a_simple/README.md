@@ -98,7 +98,3 @@ uv run --active client.py
 
 You will see the client interact with the host agent in the terminal output.
 Follow your individual terminals to understand how each server interacts with others
-
-
-
-
