@@ -114,18 +114,25 @@ Read below steps to use this feature
 4. First time client receives below response from host agent
        
     {
-      "id": "6ce712a8-824b-433e-8cfb-e1378e34737f",
+      "id": "263d05c2-5233-4e8f-8795-476f271fdc4e",
       "jsonrpc": "2.0",
       "result": {
-        "contextId": "jkhjkhjkhjkhjhjhsdefrfr" , # this is the contextId you need to use
+        "contextId": null,
         "kind": "message",
-        "messageId": "0a597606-955f-4c60-9b07-f8b51864035d",
-        "metadata": null,
+        "messageId": "ab16c549-b8cc-44e6-a431-e761b350af39",
+        "metadata": {
+          "context_id": "70996de0-543d-4f36-899c-c37820131032", # Use this field context_id
+          "current_state": {
+            "category": "hardware",
+            "affected_system": "hardware issue",
+            "urgency": "medium"
+          }
+        },
         "parts": [
           {
             "kind": "text",
             "metadata": null,
-            "text": "The status of hardware ticket 30 is pending. The type of issue reported is that the Python installation is failing."
+            "text": "How is this impacting your work or service?"
           }
         ],
         "referenceTaskIds": null,
@@ -139,8 +146,8 @@ Read below steps to use this feature
       message_payload = Message(
           role=Role.user,
           messageId=str(uuid.uuid4()),
-          parts=[Part(root=TextPart(text="What is the status of hardware ticket 30?"))]
-          contextId = "ewewewewe"  # Pass here
+          parts=[Part(root=TextPart(text="Client is Upset"))]
+          contextId = "ewewewewe"  # Pass the context_id value here
       )
 
 # ============================== Local Testing =======================================
