@@ -63,8 +63,23 @@ async def main() -> None:
             ),
         )    
         print("Sending message")
+        # Error handling for sending message to host agent
+        try:
+            response = await client.send_message(request)
 
-        response = await client.send_message(request)
+        except httpx.ConnectError:
+            print("Connectivity issue")
+            return
+
+
+        except asyncio.TimeoutError:
+            print("Request timed out")
+            return
+
+        except Exception as e:
+            print("An unexpected error occurred")
+            return
+        
         print("Response:")
         print(response.model_dump_json(indent=2))
 

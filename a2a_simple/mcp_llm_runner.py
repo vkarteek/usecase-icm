@@ -9,8 +9,17 @@ async def run_llm_with_mcp_tools(
     mcp_client,
     system_prompt: str
 ) -> str:
-    # 1. Load MCP tools
-    tools = await mcp_client.list_tools()
+    # 1️⃣ Load MCP tools safely
+    tools_result = await mcp_client.list_tools()
+    #print("Tools Result while calling:", tools_result)
+
+    if tools_result["error"]:
+        return (
+            "I’m unable to access the ticketing system right now. "
+            "Please try again later."
+        )
+
+    tools = tools_result["tools"]
 
     openai_tools = [
         {
@@ -24,7 +33,7 @@ async def run_llm_with_mcp_tools(
         for t in tools
     ]
 
-    # 2. First LLM call
+    # 2️⃣ First LLM call (tool selection)
     step1 = await openai_client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -37,18 +46,29 @@ async def run_llm_with_mcp_tools(
 
     assistant = step1.choices[0].message
 
-    # 3. No tool requested
+    # 3️⃣ No tool requested → return LLM answer
     if not assistant.tool_calls:
-        return assistant.content
+        return assistant.content or "I couldn’t determine an action to take."
 
-    # 4. Tool requested
+    # 4️⃣ Tool requested
     tool_call = assistant.tool_calls[0]
     tool_name = tool_call.function.name
-    args = json.loads(tool_call.function.arguments or "{}")
+
+    try:
+        args = json.loads(tool_call.function.arguments or "{}")
+    except json.JSONDecodeError:
+        return "I couldn’t understand the request parameters. Please try again."
 
     tool_result = await mcp_client.call_tool(tool_name, args)
 
-    # 5. Final LLM call with tool output
+    # 🚨 MCP FAILURE HANDLING
+    if tool_result["error"]:
+        return (
+            "I tried to access the ticketing system, but it’s currently unavailable. "
+            "Please try again later or contact support if this is urgent."
+        )
+    print("Tool Result after calling:", tool_result["data"])
+    # 5️⃣ Final LLM call with tool output
     step2 = await openai_client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -58,9 +78,9 @@ async def run_llm_with_mcp_tools(
             {
                 "role": "tool",
                 "tool_call_id": tool_call.id,
-                "content": json.dumps(tool_result),
+                "content": json.dumps(tool_result["data"]),
             },
         ],
     )
 
-    return step2.choices[0].message.content
+    return step2.choices[0].message.content or "Operation completed."

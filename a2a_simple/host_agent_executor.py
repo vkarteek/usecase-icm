@@ -18,6 +18,7 @@ from a2a.types import Message, Part, TextPart, Role
 
 from openai import AsyncOpenAI
 from host_state import HostConversationState
+import asyncio
 
 # =========================
 # OpenAI setup (classifier)
@@ -166,7 +167,27 @@ class HostAgentExecutor(AgentExecutor):
         context: RequestContext,
         event_queue: EventQueue,
     ):
-        await self._init_agents()
+        # Error handling for fetching agent cards of downstream agents
+        try:
+            await self._init_agents()
+        except httpx.ConnectError:
+            # Return response to user
+            event_queue.enqueue_event(
+                new_agent_text_message("We are facing connectivity issues with our specialist agents. Please try again later.")
+            )
+            return
+        
+        except asyncio.TimeoutError:
+            event_queue.enqueue_event(
+                new_agent_text_message("Our specialist agents are taking longer than expected to respond. Please try again later.")
+            )
+            return
+
+        except Exception as e:
+            event_queue.enqueue_event(
+                new_agent_text_message("An unexpected error occurred. Please try again later.")
+            )
+            return
 
         context_id = context.context_id
         print(f"[HostAgent] Context ID: {context_id}")
@@ -189,18 +210,36 @@ class HostAgentExecutor(AgentExecutor):
                 target_client = self.software_client
                 print("[HostAgent] Routing status update to Software Agent")
 
-            agent_status_response = await target_client.send_message(
-                self._build_request(user_input)
-            )
+            # Error handling for fetching incident status from target agent    
+            try:
+                agent_status_response = await target_client.send_message(
+                    self._build_request(user_input)
+                )
 
-            # Extract replies
-            agent_status_reply = agent_status_response.root.result.parts[0].root.text
+                # Extract replies
+                agent_status_reply = agent_status_response.root.result.parts[0].root.text
 
-            # Return combined response to user
-            event_queue.enqueue_event(
-                new_agent_text_message(agent_status_reply)
-            )
-            return
+                # Return combined response to user
+                event_queue.enqueue_event(
+                    new_agent_text_message(agent_status_reply)
+                )
+                return
+            except httpx.ConnectError:
+            # Return response to user
+                event_queue.enqueue_event(
+                    new_agent_text_message("We are facing connectivity issues with our specialist agents. Please try again later.")
+                )
+
+
+            except asyncio.TimeoutError:
+                event_queue.enqueue_event(
+                    new_agent_text_message("Our specialist agents are taking longer than expected to respond. Please try again later.")
+                )
+
+            except Exception as e:
+                event_queue.enqueue_event(
+                    new_agent_text_message("An unexpected error occurred. Please try again later.")
+                )
         # Update state
         state = self.state_store.update(context_id, {
             k: v for k, v in extracted.items() if v
@@ -243,25 +282,36 @@ class HostAgentExecutor(AgentExecutor):
             print("[HostAgent] Routing to Software Agent")
         # Compose user problem and Forward request
         user_issue=f"My type of issue is {state['category']} . My ugency is {state['urgency']} . My affected system is {state['affected_system']} . My impact is {state['impact']} ."
-            
-        response = await target_client.send_message(
-            self._build_request(user_issue)
-        )
 
-        #print(f"[HostAgent] Received response: {response}")
+        # Error handling for sending incident details to target agent    
+        try:
+            response = await target_client.send_message(
+                self._build_request(user_issue)
+            )
 
-        # Extract text safely
-        # agent_reply = ""
-        # if response.result and response.result.parts:
-        #     agent_reply = response.result.parts[0].text
-        agent_reply = response.root.result.parts[0].root.text
+            agent_reply = response.root.result.parts[0].root.text
 
 
-        # Return response to user
-        event_queue.enqueue_event(
-            new_agent_text_message(agent_reply)
-        )
+            # Return response to user
+            event_queue.enqueue_event(
+                new_agent_text_message(agent_reply)
+            )
+        except httpx.ConnectError:
+            # Return response to user
+            event_queue.enqueue_event(
+                new_agent_text_message("We are facing connectivity issues with our specialist agents. Please try again later.")
+            )
 
+
+        except asyncio.TimeoutError:
+            event_queue.enqueue_event(
+                new_agent_text_message("Our specialist agents are taking longer than expected to respond. Please try again later.")
+            )
+
+        except Exception as e:
+            event_queue.enqueue_event(
+                new_agent_text_message("An unexpected error occurred. Please try again later.")
+            )
     # -------------------------
     # Cancel handling
     # -------------------------
