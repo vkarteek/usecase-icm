@@ -98,3 +98,59 @@ uv run --active client.py
 
 You will see the client interact with the host agent in the terminal output.
 Follow your individual terminals to understand how each server interacts with others
+
+# ======== Multi-turn conversation / Progressive investigation / Slot Filing ==============
+
+Our POC supports to and fro conversation between client and host agent . 
+Read below steps to use this feature
+
+1. Any conversation in our POC is uniquely identified by contextId inside the HostAgentExecutor.py
+2. This contextId is provided by A2A 
+3. For the very first time client does not send any contextId . contextId gets generated from 
+   host agent server and is sent inside response to client . From next time onwareds, client send this contextId everytime it gets a followup from host agent . Host agent knows from this contextId that 
+   it is the same user continuing the conversation
+
+   New contextId =  New conversation
+4. First time client receives below response from host agent
+       
+    {
+      "id": "6ce712a8-824b-433e-8cfb-e1378e34737f",
+      "jsonrpc": "2.0",
+      "result": {
+        "contextId": "jkhjkhjkhjkhjhjhsdefrfr" , # this is the contextId you need to use
+        "kind": "message",
+        "messageId": "0a597606-955f-4c60-9b07-f8b51864035d",
+        "metadata": null,
+        "parts": [
+          {
+            "kind": "text",
+            "metadata": null,
+            "text": "The status of hardware ticket 30 is pending. The type of issue reported is that the Python installation is failing."
+          }
+        ],
+        "referenceTaskIds": null,
+        "role": "agent",
+        "taskId": null
+      }
+    }
+
+5. In Client Code , pass contextId here to continue the conversation ( answer followups )- 
+
+      message_payload = Message(
+          role=Role.user,
+          messageId=str(uuid.uuid4()),
+          parts=[Part(root=TextPart(text="What is the status of hardware ticket 30?"))]
+          contextId = "ewewewewe"  # Pass here
+      )
+
+# ============================== Local Testing =======================================
+
+We have used MockAPI.io as tools so if MockAPIs are down we need to use local data
+
+1. Fetching Status of Incident
+
+For this uncomment the lines inside fetchHardwareTicket.js and fetchSoftwareTicket.js
+
+2. Creating a new Incident
+
+We cannot test this locally as of now
