@@ -19,6 +19,7 @@ from a2a.types import Message, Part, TextPart, Role
 from openai import AsyncOpenAI
 from host_state import HostConversationState
 import asyncio
+from troubleshooting import analyze_rootagent_error
 
 # =========================
 # OpenAI setup (classifier)
@@ -172,18 +173,36 @@ class HostAgentExecutor(AgentExecutor):
             await self._init_agents()
         except httpx.ConnectError:
             # Return response to user
+            await analyze_rootagent_error(
+                self.llm,
+                error_message="Failed to connect to specialist agent",
+                error_type="CONNECTIVITY during agent card fetch",   # <-- Field value for this block
+                agent_type="may be either software or hardware"      # <-- Type of agent
+            )
             event_queue.enqueue_event(
                 new_agent_text_message("We are facing connectivity issues with our specialist agents. Please try again later.")
             )
             return
         
         except asyncio.TimeoutError:
+            await analyze_rootagent_error(
+                self.llm,
+                error_message="Failed to connect to specialist agent",
+                error_type="Timeout during agent card fetch",   # <-- Field value for this block
+                agent_type="may be either software or hardware"      # <-- Type of agent
+            )
             event_queue.enqueue_event(
                 new_agent_text_message("Our specialist agents are taking longer than expected to respond. Please try again later.")
             )
             return
 
         except Exception as e:
+            await analyze_rootagent_error(
+                self.llm,
+                error_message=str(e),
+                error_type="Unknown error during agent card fetch",   # <-- Field value for this block
+                agent_type="may be either software or hardware"      # <-- Type of agent
+            )
             event_queue.enqueue_event(
                 new_agent_text_message("An unexpected error occurred. Please try again later.")
             )
@@ -226,20 +245,41 @@ class HostAgentExecutor(AgentExecutor):
                 return
             except httpx.ConnectError:
             # Return response to user
+                await analyze_rootagent_error(
+                    self.llm,
+                    error_message=f"Failed to connect to {extracted[0:8]} agent during fetching incident",
+                    error_type=f"CONNECTIVITY",   # <-- Field value for this block
+                    agent_type=extracted[0:8]     # <-- Type of agent
+                )
                 event_queue.enqueue_event(
                     new_agent_text_message("We are facing connectivity issues with our specialist agents. Please try again later.")
                 )
+                return
 
 
             except asyncio.TimeoutError:
+                await analyze_rootagent_error(
+                    self.llm,
+                    error_message=f"Failed to connect to {extracted[0:8]} agent during fetching incident",
+                    error_type=f"Timeout error",   # <-- Field value for this block
+                    agent_type=extracted[0:8]     # <-- Type of agent
+                )
                 event_queue.enqueue_event(
                     new_agent_text_message("Our specialist agents are taking longer than expected to respond. Please try again later.")
                 )
+                return
 
             except Exception as e:
+                await analyze_rootagent_error(
+                    self.llm,
+                    error_message=str(e),
+                    error_type=f"Unknown error",   # <-- Field value for this block
+                    agent_type=extracted[0:8]     # <-- Type of agent
+                )
                 event_queue.enqueue_event(
                     new_agent_text_message("An unexpected error occurred. Please try again later.")
                 )
+                return
         # Update state
         state = self.state_store.update(context_id, {
             k: v for k, v in extracted.items() if v
@@ -298,20 +338,41 @@ class HostAgentExecutor(AgentExecutor):
             )
         except httpx.ConnectError:
             # Return response to user
+            await analyze_rootagent_error(
+                self.llm,
+                error_message=f"Failed to connect to {state['category']} agent during sending incident",
+                error_type=f"CONNECTIVITY error",   # <-- Field value for this block
+                agent_type=state['category']     # <-- Type of agent
+            )
             event_queue.enqueue_event(
                 new_agent_text_message("We are facing connectivity issues with our specialist agents. Please try again later.")
             )
+            return
 
 
         except asyncio.TimeoutError:
+            await analyze_rootagent_error(
+                self.llm,
+                error_message=f"Failed to connect to {state['category']} agent during sending incident",
+                error_type=f"Timeout error",   # <-- Field value for this block
+                agent_type=state['category']     # <-- Type of agent
+            )
             event_queue.enqueue_event(
                 new_agent_text_message("Our specialist agents are taking longer than expected to respond. Please try again later.")
             )
+            return
 
         except Exception as e:
+            await analyze_rootagent_error(
+                self.llm,
+                error_message=str(e),
+                error_type=f"Unknown error",   # <-- Field value for this block
+                agent_type=state['category']     # <-- Type of agent
+            )
             event_queue.enqueue_event(
                 new_agent_text_message("An unexpected error occurred. Please try again later.")
             )
+            return
     # -------------------------
     # Cancel handling
     # -------------------------

@@ -87,6 +87,10 @@ HARDWARE_TICKET_API = https://69411fe3686bc3ca8165b797.mockapi.io/incidentsP
 Navigate to the path where server is present and run below -
 
 npm install
+
+The MCP server will have some certificate issue while running in Mphasis network , in personal network it won't happen. For Mphasis network , please run below and then run the server .
+
+set NODE_TLS_REJECT_UNAUTHORIZED=0
 node server.js
 
 ## 4. Run the Client
