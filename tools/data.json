@@ -1,0 +1,266 @@
+[
+  {
+    "createdAt": "2025-12-24T10:37:53.571Z",
+    "type": "hardware",
+    "description": "laptop screen broken",
+    "id": "1"
+  },
+  {
+    "createdAt": "2025-12-24T10:37:53.571Z",
+    "type": "software",
+    "description": "Python installation failing",
+    "id": "2"
+  },
+  {
+    "createdAt": "2025-12-24T00:37:44.994Z",
+    "type": "Laptop charger teared up",
+    "descriptiom": "descriptiom 3",
+    "id": "3",
+    "status": "completed"
+  },
+  {
+    "createdAt": "2025-12-25T08:17:50.028Z",
+    "type": "Laptop keyboard is broken",
+    "descriptiom": "descriptiom 4",
+    "id": "4",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-25T04:02:17.884Z",
+    "type": "Laptop Python software is causing the system to hang.",
+    "descriptiom": "descriptiom 5",
+    "id": "5",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-25T01:21:27.564Z",
+    "type": "The light on my mouse is not turning on.",
+    "descriptiom": "descriptiom 6",
+    "id": "6",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-25T07:23:30.879Z",
+    "type": "User's laptop charger has teared up and needs replacement.",
+    "descriptiom": "descriptiom 7",
+    "id": "7",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-25T10:40:03.316Z",
+    "type": "Mouse button not working.",
+    "descriptiom": "descriptiom 8",
+    "id": "8",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-25T00:42:19.403Z",
+    "type": "User reports that the UPS backup battery is not charging.",
+    "descriptiom": "descriptiom 9",
+    "id": "9",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-25T05:56:03.789Z",
+    "type": "The user's mouse is not working.",
+    "descriptiom": "descriptiom 10",
+    "id": "10",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-25T06:23:15.612Z",
+    "type": "Mouse light is not working.",
+    "descriptiom": "descriptiom 11",
+    "id": "11",
+    "status": "completed"
+  },
+  {
+    "createdAt": "2025-12-25T18:11:02.599Z",
+    "type": "CPU is physically broken into pieces and requires immediate attention and replacement.",
+    "descriptiom": "descriptiom 12",
+    "id": "12",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-25T08:24:25.602Z",
+    "type": "User's laptop is not turning on.",
+    "descriptiom": "descriptiom 13",
+    "id": "13",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-26T03:07:34.766Z",
+    "type": "Python is not working",
+    "descriptiom": "descriptiom 14",
+    "id": "14",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-25T10:08:04.822Z",
+    "type": "Python is not installed on my laptop.",
+    "descriptiom": "descriptiom 15",
+    "id": "15",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-26T03:00:36.719Z",
+    "type": "The laptop does not turn on and it seems to be a severe hardware issue.",
+    "descriptiom": "descriptiom 16",
+    "id": "16",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-25T20:42:39.934Z",
+    "type": "User's laptop does not turn on, indicating a severe hardware issue.",
+    "descriptiom": "descriptiom 17",
+    "id": "17",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-26T05:33:42.539Z",
+    "type": "Laptop does not turn on, severe hardware issue.",
+    "descriptiom": "descriptiom 18",
+    "id": "18",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-25T17:41:03.904Z",
+    "type": "Python installation is failing.",
+    "descriptiom": "descriptiom 19",
+    "id": "19",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-26T00:56:36.646Z",
+    "type": "Laptop is overheating",
+    "descriptiom": "descriptiom 20",
+    "id": "20",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-25T16:57:07.674Z",
+    "type": "Monitor is not working.",
+    "descriptiom": "descriptiom 21",
+    "id": "21",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-26T10:24:04.245Z",
+    "type": "Python installation is failing. Please assist with resolving the issue.",
+    "descriptiom": "descriptiom 22",
+    "id": "22",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-26T00:22:39.538Z",
+    "type": "Python installation is failing. Please assist in resolving the issue.",
+    "descriptiom": "descriptiom 23",
+    "id": "23",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-27T04:16:19.405Z",
+    "type": "Laptop battery is not charging",
+    "descriptiom": "descriptiom 24",
+    "id": "24",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-27T00:42:09.679Z",
+    "type": "Laptop battery is not charging.",
+    "descriptiom": "descriptiom 25",
+    "id": "25",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-27T00:18:23.345Z",
+    "type": "The user's laptop is not working.",
+    "descriptiom": "descriptiom 26",
+    "id": "26",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-27T05:43:50.053Z",
+    "type": "Laptop is affected",
+    "descriptiom": "descriptiom 27",
+    "id": "27",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-26T15:45:38.571Z",
+    "type": "User is unable to connect to VPN.",
+    "descriptiom": "descriptiom 28",
+    "id": "28",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-28T06:55:23.448Z",
+    "type": "Laptop is not turning on",
+    "descriptiom": "descriptiom 29",
+    "id": "29",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-28T15:47:23.299Z",
+    "type": "Python installation is failing",
+    "descriptiom": "descriptiom 30",
+    "id": "30",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-28T11:01:07.350Z",
+    "type": "this is critical issue in my laptop hardware",
+    "descriptiom": "descriptiom 31",
+    "id": "31",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-28T17:41:10.394Z",
+    "type": "This is a critical issue in my laptop hardware.",
+    "descriptiom": "descriptiom 32",
+    "id": "32",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-28T04:39:49.760Z",
+    "type": "Hardware issue affecting project delivery timeline. Urgency is low, but the delivery timeline is impacted.",
+    "descriptiom": "descriptiom 33",
+    "id": "33",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-27T20:45:10.475Z",
+    "type": "Critical software issue related to OS functionality with a critical impact on software functionality.",
+    "descriptiom": "descriptiom 34",
+    "id": "34",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-27T19:43:37.779Z",
+    "type": "Issue with the CPU causing delivery delays. Urgency is medium.",
+    "descriptiom": "descriptiom 35",
+    "id": "35",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-28T10:07:44.510Z",
+    "type": "Urgency: High. Issue: CPU fan. Impact: Reduced cooling efficiency; potential overheating.",
+    "descriptiom": "descriptiom 36",
+    "id": "36",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-30T02:43:36.516Z",
+    "type": "High urgency hardware issue affecting the client_relationship system, leading to decreased client satisfaction.",
+    "descriptiom": "descriptiom 37",
+    "id": "37",
+    "status": "pending"
+  },
+  {
+    "createdAt": "2025-12-30T12:34:01.127Z",
+    "type": "Urgent software issue: Bootup problem on Windows system. Immediate assistance needed.",
+    "descriptiom": "descriptiom 38",
+    "id": "38",
+    "status": "pending"
+  }
+]

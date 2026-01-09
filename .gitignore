@@ -17,3 +17,25 @@ build/
 # OS files
 .DS_Store
 Thumbs.db
+
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.vscode/
+
+# Frontend React Files
+
+
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
