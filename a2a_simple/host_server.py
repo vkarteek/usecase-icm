@@ -1,4 +1,5 @@
 import uvicorn
+from starlette.middleware.cors import CORSMiddleware
 from a2a.server.apps import A2AStarletteApplication
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
@@ -41,8 +42,18 @@ def run_host_agent():
             http_handler=host_request_handler,
             agent_card=host_agent_card,
         )
-
-        uvicorn.run(host_server.build(), host="0.0.0.0", port=9000)
+        # 🔑 BUILD ASGI APP
+        app = host_server.build()
+    
+        # ✅ ENABLE CORS HERE
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["http://localhost:3001"],  # React app
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
+        uvicorn.run(app, host="0.0.0.0", port=9000)
 
 
 if __name__ == "__main__":
