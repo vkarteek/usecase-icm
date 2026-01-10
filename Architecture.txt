@@ -1,0 +1,86 @@
+┌────────────┐
+│   Client   │
+│ (End User) │
+└─────┬──────┘
+      │  SendMessageRequest
+      │  (Message + contextId)
+      ▼
+┌────────────────────────────┐
+│        Host Agent           │
+│  (A2A Server : 9000)        │
+│────────────────────────────│
+│ • Receives user input       │
+│ • Uses contextId            │
+│ • Maintains conversation    │
+│ • Captures missing details  │
+│ • Classifies issue type     │
+│ • Routes request            │
+└─────┬───────────┬──────────┘
+      │           │
+      │           │
+      ▼           ▼
+┌──────────────┐ ┌────────────────┐
+│ Hardware     │ │ Software        │
+│ Agent        │ │ Agent           │
+│ (A2A Server) │ │ (A2A Server)    │
+│──────────────│ │────────────────│
+│ • Domain     │ │ • Domain        │
+│   reasoning  │ │   reasoning    │
+│ • LLM calls  │ │ • LLM calls    │
+│ • MCP client │ │ • MCP client   │
+└─────┬────────┘ └─────┬──────────┘
+      │                │
+      ▼                ▼
+┌─────────────────────────────────┐
+│            MCP Server            │
+│────────────────────────────────│
+│ • Tool discovery (/tools/list)  │
+│ • Tool execution (/tools/call)  │
+│ • Abstracts external APIs       │
+└─────┬───────────────────────────┘
+      │
+      ▼
+┌─────────────────────────────────┐
+│       MockAPI.io (Tickets)       │
+│────────────────────────────────│
+│ • Create incident               │
+│ • Fetch incident                │
+│ • Update status                 │
+│   (pending / complete / closed) │
+└─────────────────────────────────┘
+      ▲
+      │
+┌─────────────────────────────────┐
+│ External Systems / Humans / SRE │
+│────────────────────────────────│
+│ • Poll ticket APIs              │
+│ • Update ticket status          │
+│ • Close incidents               │
+└─────────────────────────────────┘
+
+================================================================================
+
+Incident Lifecycle Mapping ~
+
+| IMS Concept         | Our System                         |
+| ------------------- | ----------------------------------- |
+| Incident Intake     | Host Agent                          |
+| Triage              | Host Agent classification           |
+| Impact Analysis     | State capture (`impact`, `urgency`) |
+| Assignment Group    | Hardware / Software agent           |
+| Runbooks            | MCP tools                           |
+| Automation          | MCP client                          |
+| Conversation Thread | `contextId`                         |
+| Correlation         | `contextId` + state                 |
+
+
+Clear Seperation of Responsibilities ~
+
+| Component      | Role                                    |
+| -------------- | --------------------------------------- |
+| Host Agent     | Orchestrator / Incident Intake / Router |
+| Hardware Agent | Domain-specific resolver                |
+| Software Agent | Domain-specific resolver                |
+| MCP Server     | Tooling / Action layer                  |
+| Client         | Stateless requester                     |
+
