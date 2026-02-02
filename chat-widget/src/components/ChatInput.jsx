@@ -1,4 +1,5 @@
 import { useState } from "react";
+import VoiceInput from "./VoiceInput";
 
 export default function ChatInput({ onSend }) {
   const [text, setText] = useState("");
@@ -14,10 +15,21 @@ export default function ChatInput({ onSend }) {
       <input
         value={text}
         onChange={(e) => setText(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && send()}
-        placeholder="Type a message..."
+        placeholder="Type or speak your message..."
       />
-      <button onClick={send}>Send</button>
+
+      <VoiceInput
+        onResult={(spokenText) =>
+          setText((prev) => (prev ? prev + " " + spokenText : spokenText))
+        }
+      />
+      <button
+        onClick={send}
+        disabled={!text.trim()}
+        className="send-btn"
+        title="Send">
+        ➤
+      </button>
     </div>
   );
 }

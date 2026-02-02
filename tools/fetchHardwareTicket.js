@@ -29,7 +29,11 @@ export async function fetchHardwareTicketHandler({ ticketId }) {
     content: [
       {
         type: "text",
-        text: `Hardware Ticket Details: TicketID: ${ticket.id} Type: ${ticket.type} Status: ${ticket.status}`
+        text: `**Hardware Ticket Details**
+  
+        Ticket ID: **${ticket.id}**
+        Type: **${ticket.type}**
+        Status:  **${ticket.status}**`
       }
     ]
   };

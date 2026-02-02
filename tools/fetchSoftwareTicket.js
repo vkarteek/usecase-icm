@@ -22,7 +22,11 @@ export async function fetchSoftwareTicketHandler({ ticketId }) {
     content: [
       {
         type: "text",
-        text: `Software Ticket Details:TicketID: ${ticket.id} Type: ${ticket.type} Status: ${ticket.status}`
+        text: `**Software Ticket Details**
+  
+  Ticket ID: **${ticket.id}**
+  Type: **${ticket.type}**
+  Status:  **${ticket.status}**`
       }
     ]
   };

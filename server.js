@@ -17,10 +17,41 @@ import { createSoftwareTicketHandler } from "./tools/createSoftwareTicket.js";
 import { fetchSoftwareTicketHandler } from "./tools/fetchSoftwareTicket.js";
 import { createHardwareTicketHandler } from "./tools/createHardwareTicket.js";
 import { fetchHardwareTicketHandler } from "./tools/fetchHardwareTicket.js";
+import { vectorSearchIncidentHandler } from "./tools/vectorSearchIncident.js";
+import { vectorStoreIncidentHandler } from "./tools/vectorStoreIncident.js";
 
 
 const toolsRegistry = {
 
+  vector_search_incident: {
+    name: "vector_search_incident",
+    description: "Search similar incidents from vector DB",
+    inputSchema: {
+      type: "object",
+      properties: {
+        query: { type: "string" },
+        domain: { type: "string" },
+        topK: { type: "number" },
+      },
+      required: ["query", "domain"],
+    },
+  },
+  
+  vector_store_incident: {
+    name: "vector_store_incident",
+    description: "Store resolved incident into vector DB",
+    inputSchema: {
+      type: "object",
+      properties: {
+        issue: { type: "string" },
+        solution: { type: "string" },
+        domain: { type: "string" },
+        ticketId: { type: "string" },
+      },
+      required: ["issue", "solution", "domain"],
+    },
+  },
+  
   create_software_ticket: {
     name: "create_software_ticket",
     description: "Use this tool ONLY for software issues. Creates a new software ticket. Required input: { message: string } where message contains the user's software problem.",
@@ -87,7 +118,9 @@ const handlers = {
   create_software_ticket: async (args)=> await createSoftwareTicketHandler(args),
   create_hardware_ticket:async (args)=> await createHardwareTicketHandler(args),
   fetch_software_ticket:async (args)=> await fetchSoftwareTicketHandler(args),
-  fetch_hardware_ticket:async (args)=> await fetchHardwareTicketHandler(args)
+  fetch_hardware_ticket:async (args)=> await fetchHardwareTicketHandler(args),
+  vector_search_incident: async (args) => await vectorSearchIncidentHandler(args),
+  vector_store_incident: async (args) =>await vectorStoreIncidentHandler(args)
 
 };
 

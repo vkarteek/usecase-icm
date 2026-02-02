@@ -1,0 +1,30 @@
+.chat-input {
+    display: flex;
+    gap: 8px;
+    padding: 10px;
+  }
+  
+  .mic {
+    font-size: 18px;
+    background: #eee;
+  }
+  
+  .mic.active {
+    background: red;
+    color: white;
+  }
+  .send-btn {
+    font-size: 20px;
+    padding: 8px 14px;
+    border-radius: 50%;
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .send-btn:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+  }
+  

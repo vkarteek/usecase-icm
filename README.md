@@ -167,5 +167,156 @@ For this uncomment the lines inside fetchHardwareTicket.js and fetchSoftwareTick
 We cannot test this locally as of now
 
 
+# Introduction
+===========================================
+The POC is an AI driven incident management system that can create software and hardware tickets and It can fetch the ticket status .
+
+Features of the Project
+  1. It can reduces the manual ticket creation
+  2. It can reduce manual intervention for troubleshooting steps using RAG
+  3. It can reduce the LLM cost using RAG
+  4. Reuses past solution instead of calling LLM every time 
+  5. Compatibility by using MCP and A2A
+  6. Clear separation of concerns using A2A
+  7. Incident Lifecycle Mapping
+  
+Concepts Used in the project
+1.MCP - Model context protocol
+  MCP is standardized protocol that allows LLM to  securely interact with tools and resources
+  tools - executable actions like DB calls, API calls, ticket creation
+  resources- security boundaries (read, write permissions)
+In our project we have implemented MCP server with 2 API calls that 
+ one is for fetch the available tools from the MCP server and 2nd is to call the particular tool from the mcp server 
+mcp will follow a schema. we can reuse this tools any where
+
+2.A2A- Agent to Agent 
+A2A is a multi-agent architecture every agent has a separate responsibilities and securely interact with other agents.
+In our POC we have 3 agents
+Host agent - Orchestrator responsible for gathering the ticket information from client and routes to responsible agent. Don't have access of tools and any db calls or business logic
+Software agent - responsible for software related incidents
+Hardware agent - responsible for hardware related incidents
+
+3.RAG - Retrieval Augmented Generation
+Rag ensures that it can use the past knowledge instead of giving the LLM Hallucination
+In the RAG we have used the Pinecone vector db to store and retrieve the data in the form of embeddings.
 
 
+# ==============================================================
+# Flow
+# ==============================================================
+1. This application contains 3 LLM powered AI agents (Host , Hardware, Software) , a MCP server(Tools), RAG(Pinecone VectorDB) and a Client
+2. The Client ( End User ) routes user tickets to Host Agent ( via A2A) from where ticket is routed to either of Hardware or Software Agents ( again via A2A )
+3. The Hardware and Software Agents servers act as MCP clients and connect to the MCP server to handle the tickets :  advise correct tool to MCP server for that ticket
+4. If LLM selects Create Ticket related tools then only the RAG will perform.
+5. If matching issue found in the vectordb it won't call the LLM it can reuse the vectordb solution.
+6. If no match found in the vectordb it can call the LLM for solution only and then store the new issue along with solution in the vectordb for future reuse.
+4. MCP server process the ticket with the advised tool and returns response to hardware/software agents
+5. Hardware/Software agents returns response to Host Agent
+6. Host Agent returns response to Client (End User)
+
+
+# =================== With RAG ======================
+
+┌──────────────┐
+│   React UI   │
+│  (Frontend)  │
+└──────┬───────┘
+       │ User raises incident
+       ▼
+┌────────────────────────┐
+│       Host Agent       │
+│        (Python)        │
+│  - Collect ticket info │
+│  - Classify issue type │
+│  - NO tools access     │
+│  - NO MCP access       │
+└──────┬─────────────────┘
+       │ Software / Hardware classification
+       ▼
+┌────────────────────────────────────┐
+│  Software Agent / Hardware Agent   │
+│              (Python)              │
+│  - Domain specific responsibility  │
+│  - Has tools + MCP access          │
+└──────┬─────────────────────────────┘
+       │
+       │ Pass available MCP tools
+       │ to Agent LLM
+       ▼
+┌────────────────────────────────────┐
+│        Agent LLM (OpenAI)           │
+│  - Decides which tool to invoke     │
+│  - Has MCP + Tools access           │
+└──────┬─────────────────────────────┘
+       │
+       │ If "Create Ticket" flow
+       ▼
+┌────────────────────────────────────┐
+│     Vector Search Tool (MCP)        │
+│        (Search Pinecone)            │
+└──────┬─────────────────────────────┘
+       │
+       │ Similar issue found?
+       │
+   ┌───┴──────────┐
+   │               │
+  YES             NO
+   │               │
+   ▼               ▼
+┌────────────┐   ┌────────────────────────────┐
+│ Retrieve   │   │ Call LLM for solution  │
+│ solution   │   │                            │
+│ from       │   └──────────┬─────────────────┘
+│ Pinecone   │              │
+└────┬───────┘              │
+     │                      │
+     │                      ▼
+     │          ┌────────────────────────────┐
+     │          │ Store Issue + Solution      │
+     │          │ in Pinecone (via tool)      │
+     │          └──────────┬─────────────────┘
+     │                     │
+     └──────────────┬──────┘
+                    ▼
+┌────────────────────────────────────┐
+│     Create Ticket Tool (MCP)        │
+│        (Mock Ticket API)            │
+└──────┬─────────────────────────────┘
+       │
+       ▼
+┌────────────────────────┐
+│ Ticket Created /       │
+│ Status Returned        │
+└──────┬─────────────────┘
+       ▼
+┌────────────────────────┐
+│      Host Agent        │
+└──────┬─────────────────┘
+       ▼
+┌──────────────┐
+│   React UI   │
+└──────────────┘  
+
+# Tech Stack
+
+LLM - OpenAI
+AI Agents - Python + a2a-sdk
+MCP Server - Node.js + Express
+VectorDB - Pinecone
+Tools  - MockAPI.io
+UI Voice- browser’s Web Speech API 
+# ======================= RAG==============================
+MCP Server (Node.js)
+   ├── vectorSearchIncident (Pinecone)
+   ├── vectorStoreIncident (Pinecone)
+   ├── createSoftwareTicket
+   ├── createHardwareTicket
+   ├── fetchSoftwareTicket
+   └── fetchHardwareTicket
+   
+
+   # Run Python pinecone
+   uvicorn embedding_service:app --port 9001
+# SELF_SIGNED_CERT_IN_CHAIN issue
+solution
+set NODE_TLS_REJECT_UNAUTHORIZED=0

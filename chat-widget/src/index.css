@@ -35,7 +35,10 @@
   flex: 1;
   padding: 10px;
   overflow-y: auto;
+  display: flex;            
+  flex-direction: column;     
 }
+
 
 .message {
   margin: 6px 0;
@@ -63,3 +66,71 @@
   flex: 1;
   padding: 6px;
 }
+.chat-input {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+}
+
+.mic {
+  font-size: 18px;
+  background: #427dc1;        
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.mic.active {
+  background: rgb(0, 187, 255);
+  
+}
+.send-btn {
+  font-size: 20px;
+  padding: 8px 14px;
+  border-radius: 50%;
+  background: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.send-btn:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+.sender-label {
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  opacity: 0.6;
+}
+.message.user .sender-label {
+  text-align: right;
+}
+.message.bot .sender-label {
+  text-align: left;
+}
+.option-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.option-btn {
+  background: #eef3ff;
+  border: 1px solid #007bff;
+  color: #007bff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.option-btn:hover {
+  background: #007bff;
+  color: white;
+}
+
